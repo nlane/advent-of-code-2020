@@ -26,11 +26,10 @@ func processPt2(input: String) -> ( [ String ] ) {
 
 func findNextBus(startTime: Int, buses: [ Int ]) -> Int {
     var currTime = startTime - 1
-    var nextBus = -1
-    let sortedBuses = buses.sorted()
-    while nextBus < 0 {
+    var nextBus = 0
+    while nextBus == 0 {
         currTime += 1
-        for bus in sortedBuses {
+        for bus in buses.sorted() {
             if currTime % bus == 0 {
                 nextBus = bus
                 break
@@ -53,12 +52,11 @@ func calculateOffsets(buses: [ String ]) -> [ Int: Int ] {
 func part2(buses: [ Int ], offsets: [ Int : Int ]) -> Int {
     var currTime = 100000000000000
     var step = 1
-    for i in 0..<buses.count {
-        let currBus = buses[i]
-        while ((currTime + offsets[currBus]!) % currBus != 0) {
+    for bus in buses {
+        while ((currTime + offsets[bus]!) % bus != 0) {
             currTime += step
         }
-        step *= currBus
+        step *= bus
     }
     return currTime
 }
