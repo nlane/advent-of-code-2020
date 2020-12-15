@@ -46,17 +46,46 @@ func part1(program: [ String ]) -> Int {
     })
 }
 
+func calcAllVals(binStr: String, prevVals: inout [ Int ]) {
+    if !binStr.contains("X") {
+        prevVals.append(Int(binStr, radix: 2)!)
+    } else {
+        let xIdx = binStr.firstIndex(of: "X")!
+        var binStr0 = binStr
+        var binStr1 = binStr
+        binStr0.replaceSubrange(xIdx...xIdx, with: "0")
+        binStr1.replaceSubrange(xIdx...xIdx, with: "1")
+        calcAllVals(binStr: binStr0, prevVals: &prevVals)
+        calcAllVals(binStr: binStr1, prevVals: &prevVals)
+    }
+}
 
-// pt 2
-// initialize memory dictionary
-// loop through the program
-// decode the mask as before
-// get the memory and val as before
-// turn the MEMORY address into the binary number
-// change the logic inside of the for loop zip
-// call helper function to find all the variations of the new value
-// write the original value (not memory address) to all the variation addresses
-// reduce at the end is the same
+func part2(program: [ String ]) -> Int {
+    var currMask: String = ""
+    var memToVals: [ Int: Int ] = [:]
+    for line in program {
+        if line.hasPrefix("mask") {
+            currMask = String(line.split(separator: " ").last!)
+        } else {
+            let addr = Int(line.split(separator: "[")[1].split(separator: "]")[0])!
+            let val = Int(line.split(separator: " ").last!)!
+            let binAddr = padZeros(binaryNum: String(addr, radix: 2), goalSize: currMask.count)
+            var maskedAddr = ""
+            for (addrDigit, maskDigit) in zip(binAddr, currMask) {
+                maskedAddr += maskDigit == "0" ? String(addrDigit) : String(maskDigit)
+            }
+            var memAddrs: [Int] = []
+            calcAllVals(binStr: maskedAddr, prevVals: &memAddrs)
+            for address in memAddrs {
+                memToVals[address] = val
+            }
+        }
+    }
+    return memToVals.values.reduce(0, { (sum, x) in
+        sum + x
+    })
+}
 
 let program = process(input: input)
 print(part1(program: program))
+print(part2(program: program))
