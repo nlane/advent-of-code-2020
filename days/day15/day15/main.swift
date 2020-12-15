@@ -27,7 +27,7 @@ func playGame(input: [ Int ]) -> Int {
     var currNum = input.last!
     var newNum = true
     var prevTurn = 0
-    for turn in pastTurns.count+1...2020 {
+    for turn in pastTurns.count+1...30000000 {
         if newNum {
             currNum = 0
             newNum = false
@@ -46,5 +46,9 @@ func playGame(input: [ Int ]) -> Int {
 
 let intInput = process(input: input)
 let test = process(input: "0,3,6")
-print(playGame(input: intInput))
+
+let startTime = CFAbsoluteTimeGetCurrent()
+var finalNum = playGame(input: intInput)
+let timeElapsed = CFAbsoluteTimeGetCurrent() - startTime
+print(timeElapsed)
 
